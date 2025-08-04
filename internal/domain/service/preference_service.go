@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+	"math/rand"
 	"random_today/internal/domain/entity"
 	"random_today/internal/domain/repository"
+	"time"
 )
 
 // PreferenceService 偏好领域服务
@@ -25,24 +27,24 @@ func (s *PreferenceService) AddPreference(ctx context.Context, name string, pref
 	if name == "" {
 		return nil, errors.New("偏好名称不能为空")
 	}
-	
+
 	if preferenceType == "" {
 		return nil, errors.New("偏好类型不能为空")
 	}
-	
+
 	// 创建偏好实体
 	preference := entity.NewPreference(name, preferenceType, description)
-	
+
 	// 验证实体
 	if !preference.IsValid() {
 		return nil, errors.New("偏好实体无效")
 	}
-	
+
 	// 保存到仓储
 	if err := s.repo.Create(ctx, preference); err != nil {
 		return nil, err
 	}
-	
+
 	return preference, nil
 }
 
@@ -52,17 +54,31 @@ func (s *PreferenceService) GetRandomPreference(ctx context.Context, preferenceT
 	if preferenceType == "" {
 		return nil, errors.New("偏好类型不能为空")
 	}
-	
-	// 从仓储获取随机偏好
-	preference, err := s.repo.GetRandomByType(ctx, preferenceType)
+
+	// 获取该类型的文档总数
+	total, err := s.repo.CountByType(ctx, preferenceType)
 	if err != nil {
 		return nil, err
 	}
-	
-	if preference == nil {
+
+	if total == 0 {
 		return nil, errors.New("该类型下没有偏好数据")
 	}
-	
+
+	// 在领域层随机选择索引
+	rand.Seed(time.Now().UnixNano())
+	randomIndex := rand.Int63n(total)
+
+	// 通过索引获取特定文档
+	preference, err := s.repo.GetByTypeAndIndex(ctx, preferenceType, randomIndex)
+	if err != nil {
+		return nil, err
+	}
+
+	if preference == nil {
+		return nil, errors.New("获取随机偏好失败")
+	}
+
 	return preference, nil
 }
 
@@ -71,7 +87,7 @@ func (s *PreferenceService) DeletePreference(ctx context.Context, id string) err
 	if id == "" {
 		return errors.New("偏好ID不能为空")
 	}
-	
+
 	return s.repo.Delete(ctx, id)
 }
 
@@ -80,11 +96,11 @@ func (s *PreferenceService) GetPreferencesByType(ctx context.Context, preference
 	if preferenceType == "" {
 		return nil, errors.New("偏好类型不能为空")
 	}
-	
+
 	return s.repo.GetByType(ctx, preferenceType)
 }
 
 // GetAllPreferences 获取所有偏好
 func (s *PreferenceService) GetAllPreferences(ctx context.Context) ([]*entity.Preference, error) {
 	return s.repo.GetAll(ctx)
-} 
+}
