@@ -125,11 +125,11 @@ Random Today API 提供个人偏好管理功能，支持添加、查询、删除
 
 ### 5. 删除偏好
 
-**DELETE** `/preferences/delete?id=507f1f77bcf86cd799439011`
+**DELETE** `/preferences/{id}`
 
 删除指定的偏好记录。
 
-#### 查询参数
+#### 路径参数
 
 - `id` (必需): 偏好ID
 
@@ -177,7 +177,7 @@ curl "http://localhost:8080/api/preferences/random?type=main_food"
 curl "http://localhost:8080/api/preferences/type?type=main_food"
 
 # 删除偏好
-curl -X DELETE "http://localhost:8080/api/preferences/delete?id=507f1f77bcf86cd799439011"
+curl -X DELETE "http://localhost:8080/api/preferences/507f1f77bcf86cd799439011"
 ```
 
 ### JavaScript 示例

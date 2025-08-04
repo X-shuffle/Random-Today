@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 	"random_today/internal/application/dto"
 	"random_today/internal/application/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 // PreferenceHandler 偏好处理器
@@ -20,101 +21,93 @@ func NewPreferenceHandler(appService *service.PreferenceAppService) *PreferenceH
 }
 
 // CreatePreference 创建偏好
-func (h *PreferenceHandler) CreatePreference(w http.ResponseWriter, r *http.Request) {
+func (h *PreferenceHandler) CreatePreference(c *gin.Context) {
 	var req dto.CreatePreferenceRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
 	
 	// 简单验证
 	if req.Name == "" || req.Type == "" {
-		http.Error(w, "Name and Type are required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Name and Type are required"})
 		return
 	}
 	
-	response, err := h.appService.CreatePreference(r.Context(), req)
+	response, err := h.appService.CreatePreference(c.Request.Context(), req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusCreated, response)
 }
 
 // GetRandomPreference 获取随机偏好
-func (h *PreferenceHandler) GetRandomPreference(w http.ResponseWriter, r *http.Request) {
-	preferenceType := r.URL.Query().Get("type")
+func (h *PreferenceHandler) GetRandomPreference(c *gin.Context) {
+	preferenceType := c.Query("type")
 	if preferenceType == "" {
-		http.Error(w, "Type parameter is required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Type parameter is required"})
 		return
 	}
 	
 	req := dto.GetRandomPreferenceRequest{Type: preferenceType}
-	response, err := h.appService.GetRandomPreference(r.Context(), req)
+	response, err := h.appService.GetRandomPreference(c.Request.Context(), req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, response)
 }
 
 // GetPreferencesByType 根据类型获取偏好列表
-func (h *PreferenceHandler) GetPreferencesByType(w http.ResponseWriter, r *http.Request) {
-	preferenceType := r.URL.Query().Get("type")
+func (h *PreferenceHandler) GetPreferencesByType(c *gin.Context) {
+	preferenceType := c.Query("type")
 	if preferenceType == "" {
-		http.Error(w, "Type parameter is required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Type parameter is required"})
 		return
 	}
 	
 	req := dto.GetPreferencesByTypeRequest{Type: preferenceType}
-	response, err := h.appService.GetPreferencesByType(r.Context(), req)
+	response, err := h.appService.GetPreferencesByType(c.Request.Context(), req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, response)
 }
 
 // GetAllPreferences 获取所有偏好
-func (h *PreferenceHandler) GetAllPreferences(w http.ResponseWriter, r *http.Request) {
-	response, err := h.appService.GetAllPreferences(r.Context())
+func (h *PreferenceHandler) GetAllPreferences(c *gin.Context) {
+	response, err := h.appService.GetAllPreferences(c.Request.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, response)
 }
 
 // DeletePreference 删除偏好
-func (h *PreferenceHandler) DeletePreference(w http.ResponseWriter, r *http.Request) {
-	// 从URL路径中获取ID，暂时使用查询参数
-	id := r.URL.Query().Get("id")
+func (h *PreferenceHandler) DeletePreference(c *gin.Context) {
+	id := c.Param("id")
 	if id == "" {
-		http.Error(w, "ID parameter is required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID parameter is required"})
 		return
 	}
 	
 	req := dto.DeletePreferenceRequest{ID: id}
-	response, err := h.appService.DeletePreference(r.Context(), req)
+	response, err := h.appService.DeletePreference(c.Request.Context(), req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
-	w.Header().Set("Content-Type", "application/json")
 	if response.Success {
-		w.WriteHeader(http.StatusOK)
+		c.JSON(http.StatusOK, response)
 	} else {
-		w.WriteHeader(http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, response)
 	}
-	json.NewEncoder(w).Encode(response)
 } 

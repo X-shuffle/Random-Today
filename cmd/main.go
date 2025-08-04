@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"random_today/internal/application/handler"
 	"random_today/internal/infrastructure/database"
@@ -19,7 +18,7 @@ func main() {
 
 	// 启动服务器
 	log.Println("Server starting on :8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	if err := router.Run(":8080"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 } 
