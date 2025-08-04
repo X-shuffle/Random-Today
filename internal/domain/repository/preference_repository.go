@@ -33,7 +33,4 @@ type PreferenceRepository interface {
 
 	// GetByTypeAndIndex 根据类型和索引位置获取偏好
 	GetByTypeAndIndex(ctx context.Context, preferenceType entity.PreferenceType, index int64) (*entity.Preference, error)
-
-	// GetRandomByType 根据类型随机获取一个偏好
-	GetRandomByType(ctx context.Context, preferenceType entity.PreferenceType) (*entity.Preference, error)
 }

@@ -45,4 +45,4 @@ func (p *Preference) UpdateDescription(description string) {
 // IsValid 验证偏好实体是否有效
 func (p *Preference) IsValid() bool {
 	return p.Name != "" && p.Type != ""
-} 
+}

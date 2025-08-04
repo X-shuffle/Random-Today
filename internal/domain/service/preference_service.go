@@ -48,7 +48,7 @@ func (s *PreferenceService) AddPreference(ctx context.Context, name string, pref
 	return preference, nil
 }
 
-// GetRandomPreference 随机获取偏好
+// GetRandomPreference 随机获取偏好（小数据量优化版本）
 func (s *PreferenceService) GetRandomPreference(ctx context.Context, preferenceType entity.PreferenceType) (*entity.Preference, error) {
 	// 验证类型
 	if preferenceType == "" {
@@ -65,7 +65,7 @@ func (s *PreferenceService) GetRandomPreference(ctx context.Context, preferenceT
 		return nil, errors.New("该类型下没有偏好数据")
 	}
 
-	// 在领域层随机选择索引
+	// 对于小数据量，简化随机选择逻辑
 	rand.Seed(time.Now().UnixNano())
 	randomIndex := rand.Int63n(total)
 

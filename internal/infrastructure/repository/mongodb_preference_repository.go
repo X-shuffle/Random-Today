@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"math/rand"
 	"random_today/internal/domain/entity"
 	"random_today/internal/infrastructure/database"
 	"time"
@@ -23,8 +22,26 @@ type MongoDBPreferenceRepository struct {
 func NewMongoDBPreferenceRepository() *MongoDBPreferenceRepository {
 	db := database.GetDatabase()
 	collection := db.Collection("preferences")
+
+	// 创建索引以提高查询性能
+	createIndexes(collection)
+
 	return &MongoDBPreferenceRepository{
 		collection: collection,
+	}
+}
+
+// createIndexes 创建必要的索引（小数据量优化版本）
+func createIndexes(collection *mongo.Collection) {
+	ctx := context.Background()
+
+	// 对于小数据量（<3000），只需要基本的type索引即可
+	_, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.D{{Key: "type", Value: 1}},
+		Options: options.Index().SetName("idx_type"),
+	})
+	if err != nil {
+		// 索引可能已存在，忽略错误
 	}
 }
 
@@ -129,11 +146,11 @@ func (r *MongoDBPreferenceRepository) CountByType(ctx context.Context, preferenc
 	return r.collection.CountDocuments(ctx, filter)
 }
 
-// GetByTypeAndIndex 根据类型和索引位置获取偏好
+// GetByTypeAndIndex 根据类型和索引位置获取偏好（小数据量优化版本）
 func (r *MongoDBPreferenceRepository) GetByTypeAndIndex(ctx context.Context, preferenceType entity.PreferenceType, index int64) (*entity.Preference, error) {
 	filter := bson.M{"type": preferenceType}
 
-	// 使用skip来获取指定索引位置的文档
+	// 对于小数据量（<3000），使用简单的skip操作即可
 	opts := options.FindOne().SetSkip(index)
 
 	var preference entity.Preference
@@ -146,24 +163,4 @@ func (r *MongoDBPreferenceRepository) GetByTypeAndIndex(ctx context.Context, pre
 	}
 
 	return &preference, nil
-}
-
-// GetRandomByType 根据类型随机获取一个偏好（优化版本）
-func (r *MongoDBPreferenceRepository) GetRandomByType(ctx context.Context, preferenceType entity.PreferenceType) (*entity.Preference, error) {
-	// 获取该类型的文档总数
-	total, err := r.CountByType(ctx, preferenceType)
-	if err != nil {
-		return nil, err
-	}
-
-	if total == 0 {
-		return nil, errors.New("no preferences found for this type")
-	}
-
-	// 随机选择一个索引
-	rand.Seed(time.Now().UnixNano())
-	randomIndex := rand.Int63n(total)
-
-	// 通过索引获取特定文档
-	return r.GetByTypeAndIndex(ctx, preferenceType, randomIndex)
 }
