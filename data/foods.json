@@ -1,7 +1,6 @@
 {
   "version": "1.0.0",
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2025-10-19T15:24:43.945Z",
   "foods": [
     {
       "id": "1704067200000",
@@ -66,10 +65,14 @@
       "category": "水果",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "1760887483945",
+      "name": "酸辣粉",
+      "location": "美食街",
+      "category": "快餐小吃",
+      "createdAt": "2025-10-19T15:24:43.945Z",
+      "updatedAt": "2025-10-19T15:24:43.945Z"
     }
-  ],
-  "settings": {
-    "defaultCategory": "快餐小吃",
-    "theme": "light"
-  }
+  ]
 }
