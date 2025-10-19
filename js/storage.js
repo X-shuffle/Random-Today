@@ -39,7 +39,7 @@ export class DataStorage {
         return this.foods;
       }
     } catch (error) {
-      console.error('加载缓存失败:', error);
+      // 缓存加载失败，返回空数组
     }
     return [];
   }
@@ -52,7 +52,7 @@ export class DataStorage {
       localStorage.setItem(CACHE_KEY, JSON.stringify(this.foods));
       localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
     } catch (error) {
-      console.error('保存缓存失败:', error);
+      // 缓存保存失败，忽略
     }
   }
 
@@ -71,7 +71,6 @@ export class DataStorage {
       this.saveToCache();
       return this.foods;
     } catch (error) {
-      console.error('从 GitHub 加载失败:', error);
       throw error;
     } finally {
       this.isSyncing = false;
@@ -104,7 +103,6 @@ export class DataStorage {
       this.saveToCache();
       return true;
     } catch (error) {
-      console.error('保存到 GitHub 失败:', error);
       // 失败时仍然保存到缓存
       this.saveToCache();
       return false;
@@ -121,7 +119,6 @@ export class DataStorage {
       await this.loadFromGitHub();
       return true;
     } catch (error) {
-      console.error('同步失败:', error);
       return false;
     }
   }
@@ -137,7 +134,7 @@ export class DataStorage {
     try {
       await this.loadFromGitHub();
     } catch (error) {
-      console.log('使用缓存数据（离线模式）');
+      // 使用缓存数据（离线模式）
     }
     
     return this.foods;

@@ -22,8 +22,7 @@ const appState = {
 // 管理员密码
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
-// 调试：检查密码是否正确加载
-console.log('Admin password loaded:', ADMIN_PASSWORD ? '✓' : '✗');
+
 
 /**
  * 检查登录状态
@@ -63,11 +62,6 @@ function handleLogin(event) {
   
   const password = document.getElementById('password-input').value;
   const errorDiv = document.getElementById('login-error');
-  
-  // 调试信息
-  console.log('Input password:', password);
-  console.log('Expected password:', ADMIN_PASSWORD);
-  console.log('Match:', password === ADMIN_PASSWORD);
   
   if (!ADMIN_PASSWORD) {
     errorDiv.innerHTML = '<span>⚠️ 管理员密码未配置，请检查 .env 文件</span>';
@@ -128,7 +122,6 @@ async function initApp() {
     
     showToast('数据加载成功', 'success');
   } catch (error) {
-    console.error('初始化失败:', error);
     showToast('初始化失败，使用离线模式', 'warning');
     updateSyncStatus(false, '离线模式');
   }
@@ -145,9 +138,9 @@ function renderFoodList() {
   
   if (foods.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full empty-state">
-        <div class="empty-state-icon">🍽️</div>
-        <p class="text-lg">暂无食物数据</p>
+      <div class="col-span-full text-center py-12 text-gray-500">
+        <div class="text-6xl mb-4">🍽️</div>
+        <p class="text-lg font-semibold">暂无食物数据</p>
         <p class="text-sm mt-2">添加一些食物开始使用吧！</p>
       </div>
     `;
@@ -155,20 +148,23 @@ function renderFoodList() {
   }
   
   container.innerHTML = foods.map(food => `
-    <div class="card bg-base-100 shadow-xl food-card">
-      <div class="card-body">
-        <h3 class="card-title">
-          ${FOOD_CATEGORIES[food.category] || '🍽️'} ${food.name}
-        </h3>
-        ${food.location ? `<p class="text-sm text-base-content/70">📍 ${food.location}</p>` : ''}
-        <div class="text-xs text-base-content/50 mt-2">
-          创建于 ${formatDateTime(food.createdAt)}
+    <div class="glass-card rounded-2xl shadow-lg food-card p-6">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl">${FOOD_CATEGORIES[food.category] || '🍽️'}</span>
+          <div>
+            <h3 class="font-bold text-lg">${food.name}</h3>
+            ${food.location ? `<p class="text-sm text-gray-600">📍 ${food.location}</p>` : ''}
+          </div>
         </div>
-        <div class="card-actions justify-end mt-2">
-          <button class="btn btn-sm btn-error btn-outline" onclick="deleteFood('${food.id}')">
-            删除
-          </button>
+      </div>
+      <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+        <div class="text-xs text-gray-500">
+          ${formatDateTime(food.createdAt)}
         </div>
+        <button class="btn btn-sm btn-error btn-outline" onclick="deleteFood('${food.id}')">
+          🗑️ 删除
+        </button>
       </div>
     </div>
   `).join('');
@@ -205,7 +201,6 @@ async function addFood(event) {
     
     showToast('添加成功', 'success');
   } catch (error) {
-    console.error('添加失败:', error);
     showToast('添加失败', 'error');
     updateSyncStatus(false, '同步失败');
   }
@@ -229,7 +224,6 @@ async function deleteFood(id) {
     
     showToast('删除成功', 'success');
   } catch (error) {
-    console.error('删除失败:', error);
     showToast('删除失败', 'error');
     updateSyncStatus(false, '同步失败');
   }
@@ -240,15 +234,6 @@ async function deleteFood(id) {
  */
 function switchCategory(category) {
   appState.currentCategory = category;
-  
-  // 更新标签样式
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.classList.remove('tab-active');
-    if (tab.dataset.category === category) {
-      tab.classList.add('tab-active');
-    }
-  });
-  
   renderFoodList();
 }
 
@@ -260,7 +245,6 @@ function exportData() {
     storage.exportToFile();
     showToast('导出成功', 'success');
   } catch (error) {
-    console.error('导出失败:', error);
     showToast('导出失败', 'error');
   }
 }
@@ -283,7 +267,6 @@ async function syncData() {
       showToast('同步失败', 'error');
     }
   } catch (error) {
-    console.error('同步失败:', error);
     updateSyncStatus(false, '同步失败');
     showToast('同步失败', 'error');
   }
@@ -311,7 +294,6 @@ async function clearAllData() {
     
     showToast('数据已清空', 'success');
   } catch (error) {
-    console.error('清空失败:', error);
     showToast('清空失败', 'error');
     updateSyncStatus(false, '操作失败');
   }
@@ -375,10 +357,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // 添加食物表单
   document.getElementById('add-food-form')?.addEventListener('submit', addFood);
   
-  // 分类标签
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      switchCategory(tab.dataset.category);
+  // 分类筛选按钮
+  document.querySelectorAll('[data-category]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchCategory(btn.dataset.category);
     });
   });
   

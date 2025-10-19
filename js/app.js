@@ -33,7 +33,6 @@ async function initApp() {
     // 更新同步状态
     updateSyncStatus(false, '已同步');
   } catch (error) {
-    console.error('初始化失败:', error);
     updateSyncStatus(false, '离线模式');
   }
 }

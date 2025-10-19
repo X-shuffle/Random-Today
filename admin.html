@@ -10,185 +10,264 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.0/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 自定义样式 -->
-    <link rel="stylesheet" href="/css/custom.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .food-card {
+            transition: all 0.3s ease;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .category-badge {
+            font-size: 2rem;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-base-100">
+<body>
     <!-- 登录页面 -->
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4">
-        <div class="card w-full max-w-md bg-base-200 shadow-2xl">
-            <div class="card-body">
-                <h2 class="card-title text-3xl justify-center mb-6">🔐 管理后台</h2>
-                <p class="text-center text-base-content/70 mb-4">请输入管理员密码</p>
-                
-                <form id="login-form" class="space-y-4">
-                    <div class="form-control">
-                        <input 
-                            type="password" 
-                            id="password-input" 
-                            placeholder="管理员密码" 
-                            class="input input-bordered input-lg"
-                            required
-                            autocomplete="current-password"
-                        >
-                    </div>
-                    
-                    <div id="login-error" class="alert alert-error hidden">
-                        <span>密码错误，请重试</span>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-lg w-full">
-                        登录
-                    </button>
-                    
-                    <a href="/" class="btn btn-ghost btn-sm w-full">
-                        返回首页
-                    </a>
-                </form>
+        <div class="glass-card rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4">🔐</div>
+                <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                    管理后台
+                </h2>
+                <p class="text-gray-600">请输入管理员密码</p>
             </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div class="form-control">
+                    <input 
+                        type="password" 
+                        id="password-input" 
+                        placeholder="管理员密码" 
+                        class="input input-bordered input-lg w-full"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+                
+                <div id="login-error" class="alert alert-error hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>密码错误，请重试</span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg w-full">
+                    <span class="text-lg">登录</span>
+                </button>
+                
+                <a href="/" class="btn btn-ghost w-full">
+                    ← 返回首页
+                </a>
+            </form>
         </div>
     </div>
     
     <!-- 管理页面 -->
-    <div id="admin-page" class="hidden">
+    <div id="admin-page" class="hidden min-h-screen">
         <!-- 头部导航 -->
-        <header class="navbar bg-primary text-primary-content shadow-lg">
-            <div class="container mx-auto">
+        <header class="glass-card shadow-lg sticky top-0 z-50">
+            <div class="navbar container mx-auto">
                 <div class="flex-1">
-                    <h1 class="text-2xl font-bold">🔧 管理后台</h1>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        🔧 管理后台
+                    </h1>
                 </div>
                 <div class="flex-none gap-2">
-                    <button id="sync-status" class="btn btn-ghost btn-sm">
+                    <div id="sync-status" class="flex items-center gap-2 text-sm text-gray-600">
                         <span class="loading loading-spinner loading-xs hidden"></span>
                         <span class="status-text">已同步</span>
+                    </div>
+                    <a href="/" class="btn btn-ghost btn-sm">
+                        🏠 首页
+                    </a>
+                    <button id="logout-btn" class="btn btn-error btn-sm">
+                        🚪 退出
                     </button>
-                    <a href="/" class="btn btn-ghost btn-sm">返回首页</a>
-                    <button id="logout-btn" class="btn btn-error btn-sm">退出</button>
                 </div>
             </div>
         </header>
         
         <!-- 主要内容区域 -->
-        <main class="container mx-auto p-4 max-w-6xl">
-            <!-- 食物管理区域 -->
-            <section id="food-management" class="mb-8">
-                <h2 class="text-2xl font-semibold mb-4">📝 食物管理</h2>
-                
-                <!-- 添加食物表单 -->
-                <div class="card bg-base-200 shadow-xl mb-6">
-                    <div class="card-body">
-                        <h3 class="card-title">添加新食物</h3>
-                        <form id="add-food-form" class="space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <select name="category" required class="select select-bordered">
-                                    <option value="">选择分类</option>
-                                    <option value="快餐小吃">🍔 快餐小吃</option>
-                                    <option value="甜品饮品">🍰 甜品饮品</option>
-                                    <option value="大餐">🍖 大餐</option>
-                                    <option value="水果">🍎 水果</option>
-                                </select>
-                                <input type="text" name="name" placeholder="食物名称" required 
-                                       class="input input-bordered" maxlength="50">
-                                <input type="text" name="location" placeholder="地点(可选)" 
-                                       class="input input-bordered" maxlength="50">
-                            </div>
-                            <div class="card-actions justify-end">
-                                <button type="submit" class="btn btn-primary gap-2">
-                                    <span>➕</span>
-                                    添加食物
-                                </button>
-                            </div>
-                        </form>
+        <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+            <!-- 统计卡片 -->
+            <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <div class="glass-card rounded-2xl p-6 text-center hover:shadow-xl transition-all">
+                    <div class="text-4xl mb-2">📊</div>
+                    <div class="text-3xl font-bold text-purple-600" id="total-count">0</div>
+                    <div class="text-sm text-gray-600 mt-1">总数</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center hover:shadow-xl transition-all">
+                    <div class="text-4xl mb-2">🍔</div>
+                    <div class="text-3xl font-bold text-orange-600" id="count-fast">0</div>
+                    <div class="text-sm text-gray-600 mt-1">快餐小吃</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center hover:shadow-xl transition-all">
+                    <div class="text-4xl mb-2">🍰</div>
+                    <div class="text-3xl font-bold text-pink-600" id="count-dessert">0</div>
+                    <div class="text-sm text-gray-600 mt-1">甜品饮品</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center hover:shadow-xl transition-all">
+                    <div class="text-4xl mb-2">🍖</div>
+                    <div class="text-3xl font-bold text-red-600" id="count-meal">0</div>
+                    <div class="text-sm text-gray-600 mt-1">大餐</div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center hover:shadow-xl transition-all">
+                    <div class="text-4xl mb-2">🍎</div>
+                    <div class="text-3xl font-bold text-green-600" id="count-fruit">0</div>
+                    <div class="text-sm text-gray-600 mt-1">水果</div>
+                </div>
+            </section>
+            
+            <!-- 添加食物区域 -->
+            <section class="mb-8">
+                <div class="glass-card rounded-3xl shadow-xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <span>➕</span>
+                        <span>添加新食物</span>
+                    </h2>
+                    <form id="add-food-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <select name="category" required class="select select-bordered select-lg">
+                                <option value="">选择分类</option>
+                                <option value="快餐小吃">🍔 快餐小吃</option>
+                                <option value="甜品饮品">🍰 甜品饮品</option>
+                                <option value="大餐">🍖 大餐</option>
+                                <option value="水果">🍎 水果</option>
+                            </select>
+                            <input type="text" name="name" placeholder="食物名称（必填）" required 
+                                   class="input input-bordered input-lg" maxlength="50">
+                            <input type="text" name="location" placeholder="地点（可选）" 
+                                   class="input input-bordered input-lg" maxlength="50">
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn btn-primary btn-lg gap-2 px-8">
+                                <span>➕</span>
+                                <span>添加食物</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- 食物列表区域 -->
+            <section class="mb-8">
+                <div class="glass-card rounded-3xl shadow-xl p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h2 class="text-2xl font-bold mb-4 md:mb-0 flex items-center gap-2">
+                            <span>📝</span>
+                            <span>食物列表</span>
+                        </h2>
+                        
+                        <!-- 分类筛选 -->
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn btn-sm btn-primary" data-category="all">全部</button>
+                            <button class="btn btn-sm btn-ghost" data-category="快餐小吃">🍔 快餐小吃</button>
+                            <button class="btn btn-sm btn-ghost" data-category="甜品饮品">🍰 甜品饮品</button>
+                            <button class="btn btn-sm btn-ghost" data-category="大餐">🍖 大餐</button>
+                            <button class="btn btn-sm btn-ghost" data-category="水果">🍎 水果</button>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- 分类标签 -->
-                <div class="tabs tabs-boxed mb-4">
-                    <a class="tab tab-active" data-category="all">全部</a>
-                    <a class="tab" data-category="快餐小吃">🍔 快餐小吃</a>
-                    <a class="tab" data-category="甜品饮品">🍰 甜品饮品</a>
-                    <a class="tab" data-category="大餐">🍖 大餐</a>
-                    <a class="tab" data-category="水果">🍎 水果</a>
-                </div>
-                
-                <!-- 食物列表 -->
-                <div id="food-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- 动态加载食物列表 -->
-                    <div class="col-span-full text-center py-8 text-base-content/50">
-                        <span class="loading loading-spinner loading-lg"></span>
-                        <p class="mt-2">加载中...</p>
+                    
+                    <!-- 食物卡片列表 -->
+                    <div id="food-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- 动态加载 -->
+                        <div class="col-span-full text-center py-12 text-gray-500">
+                            <span class="loading loading-spinner loading-lg"></span>
+                            <p class="mt-4 text-lg">加载中...</p>
+                        </div>
                     </div>
                 </div>
             </section>
             
             <!-- 数据管理区域 -->
-            <section id="data-manager" class="mb-8">
-                <h2 class="text-2xl font-semibold mb-4">⚙️ 数据管理</h2>
-                <div class="card bg-base-200 shadow-xl">
-                    <div class="card-body">
-                        <div class="flex flex-wrap gap-4 mb-4">
-                            <button id="export-btn" class="btn btn-success gap-2">
-                                <span>📥</span>
-                                导出数据
-                            </button>
-                            <button id="sync-btn" class="btn btn-info gap-2">
-                                <span>🔄</span>
-                                手动同步
-                            </button>
-                            <button id="clear-btn" class="btn btn-error gap-2">
-                                <span>🗑️</span>
-                                清空数据
-                            </button>
-                        </div>
-                        
-                        <div class="divider">统计信息</div>
-                        
-                        <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
-                            <div class="stat">
-                                <div class="stat-title">总食物数</div>
-                                <div class="stat-value text-primary" id="total-count">0</div>
-                                <div class="stat-desc">所有分类</div>
-                            </div>
-                            
-                            <div class="stat">
-                                <div class="stat-title">快餐小吃</div>
-                                <div class="stat-value text-secondary" id="count-fast">0</div>
-                            </div>
-                            
-                            <div class="stat">
-                                <div class="stat-title">甜品饮品</div>
-                                <div class="stat-value text-accent" id="count-dessert">0</div>
-                            </div>
-                            
-                            <div class="stat">
-                                <div class="stat-title">大餐</div>
-                                <div class="stat-value text-warning" id="count-meal">0</div>
-                            </div>
-                            
-                            <div class="stat">
-                                <div class="stat-title">水果</div>
-                                <div class="stat-value text-success" id="count-fruit">0</div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4 text-sm text-base-content/70">
-                            <p>最后同步时间: <span id="last-sync" class="font-semibold">未同步</span></p>
-                        </div>
+            <section class="mb-8">
+                <div class="glass-card rounded-3xl shadow-xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <span>⚙️</span>
+                        <span>数据管理</span>
+                    </h2>
+                    
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <button id="export-btn" class="btn btn-success gap-2">
+                            <span>📥</span>
+                            <span>导出数据</span>
+                        </button>
+                        <button id="sync-btn" class="btn btn-info gap-2">
+                            <span>🔄</span>
+                            <span>手动同步</span>
+                        </button>
+                        <button id="clear-btn" class="btn btn-error gap-2">
+                            <span>🗑️</span>
+                            <span>清空数据</span>
+                        </button>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600">
+                        <p>💡 最后同步时间: <span id="last-sync" class="font-semibold text-purple-600">未同步</span></p>
+                        <p class="mt-2">💾 数据自动保存到 GitHub，支持多设备同步</p>
                     </div>
                 </div>
             </section>
         </main>
         
         <!-- 底部信息 -->
-        <footer class="footer footer-center p-4 bg-base-300 text-base-content mt-8">
-            <p>© 2024 今天吃什么 - 管理后台</p>
+        <footer class="glass-card mt-8 py-6">
+            <div class="container mx-auto text-center text-gray-600">
+                <p>© 2024 今天吃什么 - 管理后台</p>
+                <p class="text-sm mt-2">数据存储在您的 GitHub 仓库，安全可靠</p>
+            </div>
         </footer>
     </div>
     
     <!-- Toast 通知容器 -->
-    <div id="toast-container" class="toast toast-top toast-end"></div>
+    <div id="toast-container" class="toast toast-top toast-end z-50"></div>
     
     <!-- JavaScript 模块 -->
     <script type="module" src="/js/admin.js"></script>
+    
+    <script>
+        // 分类筛选按钮交互
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtns = document.querySelectorAll('[data-category]');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('btn-primary');
+                        b.classList.add('btn-ghost');
+                    });
+                    btn.classList.remove('btn-ghost');
+                    btn.classList.add('btn-primary');
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -60,7 +60,6 @@ export class GitHubAPI {
       
       return { content, sha: data.sha };
     } catch (error) {
-      console.error('获取文件失败:', error);
       throw error;
     }
   }
@@ -109,7 +108,6 @@ export class GitHubAPI {
       
       return result;
     } catch (error) {
-      console.error('更新文件失败:', error);
       throw error;
     }
   }
