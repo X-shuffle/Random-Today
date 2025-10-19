@@ -79,24 +79,21 @@ npm run dev
 
 访问 http://localhost:3000
 
-## 📦 部署到 Cloudflare Pages
+## 📦 部署
 
-### 1. 构建项目
+### 方式一：部署到 Vercel（推荐）
 
-```bash
-npm run build
-```
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
 
-### 2. 部署到 Cloudflare Pages
+1. 点击上方按钮，或访问 [Vercel](https://vercel.com/)
+2. 导入你的 Git 仓库
+3. 配置项目：
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
 
-1. 登录 [Cloudflare Pages](https://pages.cloudflare.com/)
-2. 连接你的 Git 仓库
-3. 配置构建设置：
-   - **构建命令**: `npm run build`
-   - **构建输出目录**: `dist`
-   - **根目录**: `/`
-
-4. 配置环境变量（在 Cloudflare Pages 项目设置中）：
+4. 配置环境变量（在 Vercel 项目设置中）：
    ```
    VITE_GITHUB_TOKEN=your_token
    VITE_GITHUB_OWNER=your_username
@@ -105,7 +102,25 @@ npm run build
    VITE_ADMIN_PASSWORD=your_admin_password
    ```
 
-5. 部署完成！
+5. 点击 Deploy，等待部署完成！
+
+### 方式二：部署到 Cloudflare Pages
+
+1. 构建项目：
+   ```bash
+   npm run build
+   ```
+
+2. 登录 [Cloudflare Pages](https://pages.cloudflare.com/)
+3. 连接你的 Git 仓库
+4. 配置构建设置：
+   - **构建命令**: `npm run build`
+   - **构建输出目录**: `dist`
+   - **根目录**: `/`
+
+5. 配置环境变量（与 Vercel 相同）
+
+6. 部署完成！
 
 ## 📖 使用说明
 
@@ -134,7 +149,7 @@ npm run build
 - **UI 组件**: DaisyUI 4.4.0 + Tailwind CSS
 - **构建工具**: Vite 5.0
 - **数据存储**: GitHub API + localStorage
-- **部署平台**: Cloudflare Pages
+- **部署平台**: Vercel / Cloudflare Pages
 
 ## 📁 项目结构
 

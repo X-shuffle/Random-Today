@@ -1,5 +1,22 @@
 # 更新日志
 
+## [1.2.0] - 2024-01-XX
+
+### 新增
+- 🚀 **Vercel 部署支持**
+  - 添加 `vercel.json` 配置文件
+  - 更新文档，添加 Vercel 部署指南
+  - 支持一键部署到 Vercel
+
+### 改进
+- 📚 **文档更新**
+  - README.md 添加 Vercel 部署说明
+  - QUICK_START.md 添加 Vercel 快速部署步骤
+  - PROJECT_SUMMARY.md 更新部署方式说明
+  - 提供两种部署选择：Vercel（推荐）和 Cloudflare Pages
+
+---
+
 ## [1.1.0] - 2024-01-XX
 
 ### 新增

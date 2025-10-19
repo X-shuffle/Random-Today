@@ -87,7 +87,24 @@ A: 点击"导出数据"按钮，将数据下载到本地。
 
 ## 部署到生产环境
 
-### Cloudflare Pages
+### 方式一：Vercel（推荐）
+
+1. 推送代码到 GitHub
+2. 访问 [Vercel](https://vercel.com/) 并登录
+3. 点击 "New Project"
+4. 导入你的 GitHub 仓库
+5. Vercel 会自动检测 Vite 项目，无需额外配置
+6. 在 "Environment Variables" 中添加环境变量：
+   ```
+   VITE_GITHUB_TOKEN=你的token
+   VITE_GITHUB_OWNER=你的用户名
+   VITE_GITHUB_REPO=你的仓库名
+   VITE_GITHUB_BRANCH=main
+   VITE_ADMIN_PASSWORD=你的管理员密码
+   ```
+7. 点击 "Deploy"，等待部署完成！
+
+### 方式二：Cloudflare Pages
 
 1. 推送代码到 GitHub
 2. 登录 Cloudflare Pages

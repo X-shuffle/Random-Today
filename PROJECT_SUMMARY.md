@@ -95,6 +95,19 @@ npm run dev
 ```
 
 ### 生产部署
+
+#### Vercel（推荐）
+```bash
+# 1. 推送代码到 GitHub
+git push origin main
+
+# 2. 访问 Vercel 导入项目
+# - 自动检测 Vite 配置
+# - 添加环境变量
+# - 一键部署
+```
+
+#### Cloudflare Pages
 ```bash
 # 1. 构建项目
 npm run build
@@ -176,4 +189,4 @@ npm run build
 **下一步**: 
 1. 配置 GitHub 环境变量
 2. 启动开发服务器测试
-3. 部署到 Cloudflare Pages
+3. 部署到 Vercel 或 Cloudflare Pages
