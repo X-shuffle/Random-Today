@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>环境变量调试</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .env-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+        .env-key {
+            color: #4ec9b0;
+            font-weight: bold;
+        }
+        .env-value {
+            color: #ce9178;
+        }
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            margin-left: 10px;
+        }
+        .status.ok {
+            background: #4caf50;
+            color: white;
+        }
+        .status.error {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 环境变量调试</h1>
+    <div id="env-list"></div>
+    
+    <script type="module">
+        const envVars = {
+            'VITE_GITHUB_TOKEN': import.meta.env.VITE_GITHUB_TOKEN,
+            'VITE_GITHUB_OWNER': import.meta.env.VITE_GITHUB_OWNER,
+            'VITE_GITHUB_REPO': import.meta.env.VITE_GITHUB_REPO,
+            'VITE_GITHUB_BRANCH': import.meta.env.VITE_GITHUB_BRANCH,
+            'VITE_ADMIN_PASSWORD': import.meta.env.VITE_ADMIN_PASSWORD
+        };
+        
+        const container = document.getElementById('env-list');
+        
+        Object.entries(envVars).forEach(([key, value]) => {
+            const div = document.createElement('div');
+            div.className = 'env-item';
+            
+            const status = value ? 'ok' : 'error';
+            const statusText = value ? '✓ 已加载' : '✗ 未加载';
+            
+            // 对于 token 和 password，只显示前几位
+            let displayValue = value;
+            if (value && (key.includes('TOKEN') || key.includes('PASSWORD'))) {
+                displayValue = value.substring(0, 8) + '...';
+            }
+            
+            div.innerHTML = `
+                <span class="env-key">${key}</span>
+                <span class="status ${status}">${statusText}</span>
+                <br>
+                <span class="env-value">${displayValue || 'undefined'}</span>
+            `;
+            
+            container.appendChild(div);
+        });
+        
+        // 显示完整的 import.meta.env
+        console.log('All env vars:', import.meta.env);
+    </script>
+</body>
+</html>
