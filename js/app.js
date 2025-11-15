@@ -10,6 +10,7 @@ import { showToast } from './utils.js';
 const FOOD_CATEGORIES = {
   '快餐小吃': '🍔',
   '甜品饮品': '🍰',
+  '正餐': '🍜',
   '大餐': '🍖',
   '水果': '🍎'
 };
