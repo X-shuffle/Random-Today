@@ -9,6 +9,7 @@ import { showToast, formatDateTime } from './utils.js';
 const FOOD_CATEGORIES = {
   '快餐小吃': '🍔',
   '甜品饮品': '🍰',
+  '正餐': '🍜',
   '大餐': '🍖',
   '水果': '🍎'
 };
@@ -314,6 +315,7 @@ function updateStats() {
   const categoryMap = {
     '快餐小吃': 'count-fast',
     '甜品饮品': 'count-dessert',
+    '正餐': 'count-regular',
     '大餐': 'count-meal',
     '水果': 'count-fruit'
   };
